@@ -1,4 +1,4 @@
-name: "Xealth Cherry Picker"
+name: "Mine Cherry Picker"
 description: "Use PR labels and other workflows to cherry pick commits into release branches"
 inputs:
   token:
