@@ -54,19 +54,11 @@ export function validatelabelPatternRequirement(
 }
 
 export function parseBranchFromLabel(
-  branchPrefix: string,
+  labelPatternRequirement: string,
   label: string
 ): string {
-  /*const versionMatchRegex = /[0-9]\d*(\.[0-9]\d*)*$/
-  const version = label.match(versionMatchRegex)
-  if (!version)
-    throw new Error(
-      'user did not specify release version or the release version is in an invalid format'
-    )
-    */
-    label = label.replace(/(^CP-)/gi, "")
-    const branchName = (branchPrefix === '')? label : branchPrefix + label
-  return branchName
+    return label.replace(`/(^${labelPatternRequirement})/gi`, "")
+
 }
 
 export function filterIrrelevantBranchLabels(

@@ -28859,10 +28859,13 @@ async function createPullRequest(inputs, prBranch, branch) {
     if (process.env.GITHUB_REPOSITORY !== undefined) {
         const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
         // Get PR title
-        const title = github.context.payload &&
+        let title = github.context.payload &&
             github.context.payload.pull_request &&
             github.context.payload.pull_request.title;
-        core.info(`Using body '${title}'`);
+        if (inputs.titleWithTargetBranch == 'true') {
+            title = `[Cherry-pick to ${branch}] ${title}`;
+        }
+        core.info(`Using title '${title}'`);
         // Get PR body
         const body = github.context.payload &&
             github.context.payload.pull_request &&
@@ -29012,7 +29015,8 @@ async function run() {
         teamReviewers: utils.getInputAsArray('teamReviewers'),
         allowUserToSpecifyBranchViaLabel: core.getInput('allowUserToSpecifyBranchViaLabel') || '',
         labelPatternRequirement: core.getInput('labelPatternRequirement'),
-        userBranchPrefix: core.getInput('userBranchPrefix') || ''
+        userBranchPrefix: core.getInput('userBranchPrefix') || '',
+        titleWithTargetBranch: core.getInput('titleWithTargetBranch') || ''
     };
     const branchesToCherryPick = findBranchesToCherryPick(inputs);
     if (!branchesToCherryPick) {
@@ -29219,17 +29223,8 @@ function validatelabelPatternRequirement(labelPatternRequirement, label) {
     return label.includes(labelPatternRequirement) ? label : undefined;
 }
 exports.validatelabelPatternRequirement = validatelabelPatternRequirement;
-function parseBranchFromLabel(branchPrefix, label) {
-    /*const versionMatchRegex = /[0-9]\d*(\.[0-9]\d*)*$/
-    const version = label.match(versionMatchRegex)
-    if (!version)
-      throw new Error(
-        'user did not specify release version or the release version is in an invalid format'
-      )
-      */
-    label = label.replace(/(^CP-)/gi, "");
-    const branchName = (branchPrefix === '') ? label : branchPrefix + label;
-    return branchName;
+function parseBranchFromLabel(labelPatternRequirement, label) {
+    return label.replace(`/(^${labelPatternRequirement})/gi`, "");
 }
 exports.parseBranchFromLabel = parseBranchFromLabel;
 function filterIrrelevantBranchLabels(inputs, labels, branch) {

@@ -37,7 +37,8 @@ export async function run(): Promise<void> {
     allowUserToSpecifyBranchViaLabel:
       core.getInput('allowUserToSpecifyBranchViaLabel') || '',
     labelPatternRequirement: core.getInput('labelPatternRequirement'),
-    userBranchPrefix: core.getInput('userBranchPrefix') || ''
+    userBranchPrefix: core.getInput('userBranchPrefix') || '',
+    titleWithTargetBranch: core.getInput('titleWithTargetBranch') || ''
   }
 
   const branchesToCherryPick = findBranchesToCherryPick(inputs)

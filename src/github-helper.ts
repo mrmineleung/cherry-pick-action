@@ -27,6 +27,7 @@ export interface Inputs {
   allowUserToSpecifyBranchViaLabel: string
   labelPatternRequirement: string
   userBranchPrefix: string
+  titleWithTargetBranch: string
 }
 
 export async function createPullRequest(
@@ -39,11 +40,16 @@ export async function createPullRequest(
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
     // Get PR title
-    const title =
+    let title =
       github.context.payload &&
       github.context.payload.pull_request &&
       github.context.payload.pull_request.title
-    core.info(`Using body '${title}'`)
+
+    if (inputs.titleWithTargetBranch == 'true') {
+      title = `[Cherry-pick to ${branch}] ${title}`
+    }
+
+    core.info(`Using title '${title}'`)
 
     // Get PR body
     const body =
