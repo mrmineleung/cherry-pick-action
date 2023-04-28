@@ -53,7 +53,7 @@ export function validatelabelPatternRequirement(
   return label.includes(labelPatternRequirement) ? label : undefined
 }
 
-function parseBranchFromLabel(
+export function parseBranchFromLabel(
   branchPrefix: string,
   label: string
 ): string {
